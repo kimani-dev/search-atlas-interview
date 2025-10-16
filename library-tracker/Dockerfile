@@ -14,8 +14,8 @@ RUN apt-get update && apt-get install -my \
     unzip \
     wget
 
-# Install Node.js 16.x
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash \
+# Install Node.js 20.x
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash \
     && apt-get install -y nodejs\
     && mkdir -p /var/www/.config \
     && chmod 777 -R /var/www/.config

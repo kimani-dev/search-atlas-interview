@@ -8,10 +8,19 @@
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
-        "axios": "^1.11.0",
+        "@vitejs/plugin-vue": "^6.0.1",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^2.0.0",
+        "sass": "^1.93.2",
         "tailwindcss": "^4.0.0",
-        "vite": "^7.0.7"
+        "vite": "^7.0.7",
+        "vite-plugin-vuetify": "^2.1.2"
+    },
+    "dependencies": {
+        "@mdi/font": "^7.4.47",
+        "axios": "^1.12.2",
+        "moment": "^2.30.1",
+        "vue3-toastify": "^0.2.8",
+        "vuetify": "^3.10.5"
     }
 }
