@@ -14,11 +14,17 @@ class Loan extends Model
         'user_id',
         'loaned_at',
         'returned_at',
+        'due_at',
     ];
 
     protected $casts = [
         'loaned_at'   => 'datetime',
         'returned_at' => 'datetime',
+        'due_at' => 'datetime',
+    ];
+
+    protected $appends = [
+        'is_overdue'
     ];
 
     public function book()
@@ -28,5 +34,15 @@ class Loan extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function scopeOverdue()
+    {
+        return $this->due_date && $this->due_at->isPast();
+    }
+
+    public function getIsOverdueAttribute()
+    {
+        return $this->due_date && $this->due_at->isPast();
     }
 }

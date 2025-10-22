@@ -23,6 +23,11 @@
         {{ item.returned_at ? moment(item.returned_at).format('MMM Do YYYY \\a\\t h:mm A') : '-' }}
       </template>
 
+      <template #item.due_at="{item}">
+        <span v-if="!item.is_overdue">{{ item.due_at ? moment(item.due_at).format('MMM Do YYYY \\a\\t h:mm A') : '-' }}</span>
+        <v-chip v-else color="error" text="Overdue" />
+      </template>
+
       <template #loading>
         <v-sheet class="pa-4 text-center">Loading loans...</v-sheet>
       </template>
@@ -50,6 +55,7 @@ export default {
         { title: 'Book', key: 'book.title' },
         { title: 'Loan Date', key: 'loaned_at' },
         { title: 'Return Date', key: 'returned_at' },
+        { title: 'Due At', key: 'due_at' },
       ],
     };
   },

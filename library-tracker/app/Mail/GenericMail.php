@@ -17,7 +17,7 @@ class GenericMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct() // TODO
+    public function __construct(string $view, string $subject, public $data = [])
     {
         //
     }
@@ -28,7 +28,7 @@ class GenericMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '', // TODO
+            subject: $this->subject,
         );
     }
 
@@ -38,10 +38,8 @@ class GenericMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.generic',
-            with: [
-                // TODO
-            ],
+            view: $this->view,
+            with: $this->data,
         );
     }
 
