@@ -31,18 +31,19 @@ class Loan extends Model
     {
         return $this->belongsTo(Book::class);
     }
+    
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function scopeOverdue()
+    public function scopeOverdue($query)
     {
-        return $this->due_date && $this->due_at->isPast();
+        return $query->whereNull('returned_at')->where('due_at', '<', now());
     }
 
     public function getIsOverdueAttribute()
     {
-        return $this->due_date && $this->due_at->isPast();
+        return $this->due_at && $this->due_at->isPast() && $this->returned_at == null;
     }
 }

@@ -24,8 +24,12 @@
       </template>
 
       <template #item.due_at="{item}">
-        <span v-if="!item.is_overdue">{{ item.due_at ? moment(item.due_at).format('MMM Do YYYY \\a\\t h:mm A') : '-' }}</span>
+        <span v-if="!item.is_overdue">{{ moment(item.due_at).fromNow() }}</span>
         <v-chip v-else color="error" text="Overdue" />
+      </template>
+
+      <template #item.actions="{ item }">
+        <v-icon icon="mdi-plus" @click="selectExtend(item)" />
       </template>
 
       <template #loading>
@@ -33,6 +37,32 @@
       </template>
     </v-data-table>
   </v-card>
+
+  <!-- extend loan dialog -->
+   <v-dialog v-model="extendLoanDialog">
+    <v-row justify="center">
+      <v-col cols="12" md="6" align-self="center">
+        <v-card title="Extend Loan" subtitle="Extend your loan for a number of days">
+          <v-card-text>
+            <v-alert
+              v-if="disableLoanExtension"
+              type="error"
+              text="Book has already been returned"
+              variant="outlined"
+              class="mb-2"
+            />
+
+            <v-form :disabled="disableLoanExtension" @submit.prevent="extendLoan">
+              <v-select v-model="additionalDays" :items="loanExtendOptions"/>
+              <div class="d-flex justify-end mt-2">
+                <v-btn text="Extend Loan" type="submit" color="primary" :loading="extendLoading" :disabled="disableLoanExtension" />
+              </div>
+            </v-form>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+   </v-dialog>
 </template>
 
 <script>
@@ -54,10 +84,28 @@ export default {
         { title: 'User', key: 'user.name' },
         { title: 'Book', key: 'book.title' },
         { title: 'Loan Date', key: 'loaned_at' },
+        { title: 'Due Date', key: 'due_at' },
         { title: 'Return Date', key: 'returned_at' },
-        { title: 'Due At', key: 'due_at' },
+        { title: 'Actions', key: 'actions' },
       ],
+
+      extendLoanDialog: false,
+      loanToBeExtended: null,
+      loanExtendOptions: [
+        { title: "1 Day", value: 1 },
+        { title: "3 Days", value: 3 },
+        { title: "7 Days", value: 7 },
+        { title: "14 Days", value: 14 },
+      ],
+      additionalDays: 1,
+      extendLoading: false,
     };
+  },
+
+  computed: {
+    disableLoanExtension() {
+      return !!this.loanToBeExtended.returned_at;
+    }
   },
 
   methods: {
@@ -71,6 +119,27 @@ export default {
           console.error(e);
         })
         .finally(() => this.loading = false);
+    },
+    selectExtend(loan) {
+      this.extendLoanDialog = true;
+      this.loanToBeExtended = loan;
+    },
+    extendLoan () {
+      this.extendLoading = true;
+
+      return axios.put(`/api/v1/loans/extend/${this.loanToBeExtended.id}`, { additional_days: this.additionalDays})
+      .then(( () => {
+          this.extendLoanDialog = false;
+          toast("Loan extended succesfully", { type: 'success' });
+      }))
+      .catch(e => {
+          toast(e.response?.data?.message || e.response?.statusText || 'Error', {type: 'error'});
+          console.error(e);
+        })
+        .finally(() => {
+          this.extendLoading = false;
+          this.loadLoans();
+        });
     },
   },
 
