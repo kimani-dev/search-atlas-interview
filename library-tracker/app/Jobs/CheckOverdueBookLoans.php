@@ -7,6 +7,7 @@ use App\Models\Loan;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Log;
 
 class CheckOverdueBookLoans implements ShouldQueue
 {
@@ -22,19 +23,21 @@ class CheckOverdueBookLoans implements ShouldQueue
      */
     public function handle(): void
     {
-        $overdueLoans = Loan::overdue()->with('user:email,name', 'book:name')->get();
+        $overdueLoans = Loan::overdue()->with('user:id,email,name', 'book:id,title')->get();
 
         // send emails to overdue users
         foreach ($overdueLoans as $loan) {
-            Mail::to($loan->user->mail)
+            Mail::to($loan->user->email)
                 ->send(new GenericMail(
                     'emails.loans.overdue_loan',
                     'Overdue Loan',
                     [
                         'userName' => $loan->user->name,
-                        'bookName' => $loan->book->name,
+                        'bookTitle' => $loan->book->title,
                     ]
                 ));
         }
+
+         Log::info('Overdue loan job executed', ['count' => $overdueLoans->count()]);
     }
 }

@@ -53,4 +53,16 @@ class UserAPIController extends Controller
 
         return response()->noContent();
     }
+
+    public function getTopActive()
+    {
+        $users = User::withCount(['loans as active_loans' => function ($query) {
+            $query->whereNull('returned_at');
+        }])
+        ->orderByDesc('active_loans')
+        ->take(5)
+        ->get(['id', 'name', 'email']);
+
+        return response()->json($users);
+    }
 }

@@ -6,6 +6,7 @@ use Exception;
 use App\Models\Loan;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 
 class LoanAPIController extends Controller
 {
@@ -76,6 +77,9 @@ class LoanAPIController extends Controller
             throw new Exception('This loan is already overdue');
         }
 
-        $loan->due_at = $request['additional_days'];
+        $loan->due_at = Carbon::parse($loan->due_at)->addDays($request['additional_days']);
+        $loan->save();
+
+        return response()->json($loan);
     }
 }

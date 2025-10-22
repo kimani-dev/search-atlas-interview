@@ -15,6 +15,7 @@
               <v-tab value="authors" prepend-icon="mdi-account">Authors</v-tab>
               <v-tab value="books" prepend-icon="mdi-book-open-page-variant">Books</v-tab>
               <v-tab value="loans" prepend-icon="mdi-book-arrow-right">Loans</v-tab>
+              <v-tab value="report" prepend-icon="mdi-file-outline">Report</v-tab>
             </v-tabs>
 
             <v-window v-model="tab" class="pa-4">
@@ -29,6 +30,10 @@
               <v-window-item value="loans">
                 <LoansTab />
               </v-window-item>
+
+              <v-window-item value="report">
+                <ReportTab />
+              </v-window-item>
             </v-window>
           </v-card>
         </div>
@@ -41,6 +46,7 @@
 import AuthorsTab from './components/AuthorsTab.vue'
 import BooksTab from './components/BooksTab.vue'
 import LoansTab from './components/LoansTab.vue'
+import ReportTab from './components/ReportTab.vue'
 
 export default {
   name: 'App',
@@ -49,6 +55,7 @@ export default {
     AuthorsTab,
     BooksTab,
     LoansTab,
+    ReportTab,
   },
 
   data () {
